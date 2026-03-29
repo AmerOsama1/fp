@@ -4,25 +4,18 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    public static TurnManager instance;
 
+    public static TurnManager instance;
     public PlayerBase player;
     public PlayerBase dealer;
     public DeckManager deckManager;
     public PlayerBase splitPlayer;
-
     public bool playerTurn = true;
-    bool gameEnded    = false;
-    bool isDoubleDown = false;
+    public  AudioSource source;
 
-    // Split
+    bool gameEnded    = false;
     bool isSplit          = false;
     bool playingSecondHand = false;
-
-    // Surrender
-    bool hasSurrendered = false;
-
-    // Insurance
     bool insuranceOffered = false;
     bool insuranceTaken   = false;
     int  insuranceBet     = 0;
@@ -39,23 +32,19 @@ public class TurnManager : MonoBehaviour
             Debug.LogError("TurnManager references missing!");
     }
 
-    // ─── Start Game ───────────────────────────────────────────
     public void StartGame()
     {
         if (MoneyManager.Instance.currentBet <= 0) return;
 
         gameEnded         = false;
-        isDoubleDown      = false;
         isSplit           = false;
         playingSecondHand = false;
-        hasSurrendered    = false;
         insuranceTaken    = false;
         insuranceBet      = 0;
 
         deckManager.StartRound();
         playerTurn = true;
 
-        // عرض الإنشورانس لو الديلر شايل Ace
         if (dealer.cards.Count > 0 && dealer.cards[0].rank == CardRank.Ace)
             OfferInsurance();
     }
@@ -98,23 +87,31 @@ public class TurnManager : MonoBehaviour
     }
 
     // ─── Double Down ─────────────────────────────────────────
-    public void PlayerDoubleDown()
+   public void PlayerDoubleDown()
     {
         if (!playerTurn || gameEnded) return;
-
+ 
         PlayerBase activeHand = playingSecondHand ? splitPlayer : player;
-
+ 
         if (activeHand.cards.Count != 2)
         {
             Debug.Log("Double only on first move");
             return;
         }
-
-        isDoubleDown = true;
-        MoneyManager.Instance.currentBet *= 2;
-
+ 
+        if (MoneyManager.Instance.playerMoney < MoneyManager.Instance.currentBet)
+        {
+           SoundManager.Instance. PlaySoundclipOneShot(SoundManager.Instance.NoMoney, source);
+            //Debug.Log("Not enough money to double down!");
+            return;
+        }
+ 
+        MoneyManager.Instance.playerMoney -= MoneyManager.Instance.currentBet;
+        MoneyManager.Instance.currentBet  *= 2;
+        MoneyManager.Instance.UpdateUIPublic();
+ 
         deckManager.GiveCard(activeHand);
-
+ 
         if (activeHand.IsBust())
         {
             playerTurn = false;
@@ -122,7 +119,7 @@ public class TurnManager : MonoBehaviour
             GameManager.instance.PlayerLose();
             return;
         }
-
+ 
         PlayerStand();
     }
 
@@ -156,13 +153,11 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        // خصم رهان ثاني
         MoneyManager.Instance.playerMoney -= extraBet;
 
         isSplit           = true;
         playingSecondHand = false;
 
-        // نقل الكارت الثاني لـ splitPlayer
       if (player.cards.Count < 2)
 {
     Debug.Log("Split requires exactly 2 cards.");
@@ -185,12 +180,10 @@ if (!splitPlayer.isBot)
     movedView.transform.SetParent(splitPlayer.playerHandUI);
 else
     movedView.transform.SetParent(splitPlayer.botHandPoint);
-
-        // كل يد تاخد كارت جديد
         deckManager.GiveCard(player);
         deckManager.GiveCard(splitPlayer);
 
-        Debug.Log("Split done - now playing hand 1");
+       // Debug.Log("Split done - now playing hand 1");
     }
 
     void SwitchToSecondHand()
@@ -206,16 +199,13 @@ else
 
         if (player.cards.Count != 2)
         {
-            Debug.Log("Surrender only allowed on opening hand.");
+          //  Debug.Log("Surrender only allowed on opening hand.");
             return;
         }
 
-        hasSurrendered = true;
         playerTurn     = false;
         gameEnded      = true;
 
-        int half = MoneyManager.Instance.currentBet / 2;
-        MoneyManager.Instance.playerMoney += half;
         MoneyManager.Instance.currentBet   = 0;
 
         MoneyManager.Instance.SaveMoneyPublic();
@@ -228,8 +218,7 @@ else
     void OfferInsurance()
     {
         insuranceOffered = true;
-        Debug.Log("Insurance offered - dealer shows Ace");
-        // استدعي الـ UI بتاعك هنا عشان تظهر زرار الإنشورانس
+        //Debug.Log("Insurance offered - dealer shows Ace");
     }
 
     public void TakeInsurance()

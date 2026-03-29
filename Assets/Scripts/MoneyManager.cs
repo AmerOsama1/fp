@@ -5,17 +5,16 @@ using UnityEngine.SceneManagement;
 public class MoneyManager : MonoBehaviour
 {
     public static MoneyManager Instance;
-
     public int playerMoney = 1000;
     public int currentBet  = 0;
-
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI betText;
-   public GameObject[] COins;
+    public GameObject[] COins;
+    public GameObject Chips;
     const string MoneyKey = "PlayerMoney";
 
-    // حد فتح الشيبسات الكبيرة
     const int HighRollerThreshold = 2500;
+
 
     void Awake()
     {
@@ -23,12 +22,16 @@ public class MoneyManager : MonoBehaviour
         else { Destroy(gameObject); return; }
     }
 
+
     void Start()
     {
         LoadMoney();
         UpdateUI();
+        if(Chips!=null) Chips.SetActive(false);
         if (playerMoney <= 0) ResetMoney();
     }
+
+
     void Update(){
         if(playerMoney>1000){
             foreach (var item in COins)
@@ -45,6 +48,7 @@ public class MoneyManager : MonoBehaviour
             }
         }
     }
+
 
     // ─── Bet ─────────────────────────────────────────────────
     public void AddBet(int amount)
@@ -76,8 +80,12 @@ public class MoneyManager : MonoBehaviour
 
     public void PlayerLose()
     {
+        ShowChips();
         SaveMoney();
         UpdateUI();
+    }
+    public void ShowChips(){
+         if(Chips!=null) Chips.SetActive(true);
     }
 
     public void Draw()
@@ -87,26 +95,13 @@ public class MoneyManager : MonoBehaviour
         UpdateUI();
     }
 
-    // ─── Chips ───────────────────────────────────────────────
-    /// <summary>
-    /// يرجع الشيبسات المتاحة حسب رصيد اللاعب.
-    /// استخدمها في الـ UI عشان تعرض الشيبسات الصح.
-    /// </summary>
-    public int[] GetAvailableChips()
-    {
-        if (playerMoney >= HighRollerThreshold)
-            return new int[] { 5, 10, 25, 50, 100, 250, 500, 750, 1000 };
-        else
-            return new int[] { 5, 10, 25, 50, 100 };
-    }
 
-    // ─── Public wrappers (used by TurnManager) ────────────────
     public void SaveMoneyPublic()  => SaveMoney();
     public void UpdateUIPublic()   => UpdateUI();
 
     // ─── Internal ────────────────────────────────────────────
     void UpdateUI()
-    {
+    {  
         if (moneyText != null) moneyText.text = "$" + playerMoney;
         if (betText   != null) betText.text   = "Bet: $" + currentBet;
     }

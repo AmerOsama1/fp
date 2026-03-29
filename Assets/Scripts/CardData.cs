@@ -5,9 +5,7 @@ public class CardData : ScriptableObject
 {
     public CardSuit suit;
     public CardRank rank;
-
     public int value;
-
     public Sprite cardSprite;
 }
 

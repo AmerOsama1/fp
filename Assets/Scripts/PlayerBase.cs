@@ -5,23 +5,20 @@ using TMPro;
 public class PlayerBase : MonoBehaviour
 {
     public List<CardData> cards = new List<CardData>();
-
-    public bool isBot;
-
+    public List<CardView> cardViews = new List<CardView>();
     public RectTransform playerHandUI;
     public Transform botHandPoint;
     public TextMeshProUGUI total_cards;
+    public bool isBot;
     int total;
 
 
-    // تخزين CardViews لتحسين الأداء
-    public List<CardView> cardViews = new List<CardView>();
  void Update()
 {
     if(!isBot){
     total_cards.text=total.ToString();}
 }
-    // حساب مجموع الكروت
+
     public int GetHandValue()
     {
          total = 0;
@@ -37,7 +34,6 @@ public class PlayerBase : MonoBehaviour
                 aceCount++;
         }
 
-        // تحويل Ace من 11 إلى 1 لو عدى 21
         while (total > 21 && aceCount > 0)
         {
             total -= 10;
@@ -47,19 +43,16 @@ public class PlayerBase : MonoBehaviour
         return total;
     }
 
-    // هل اللاعب خسر
     public bool IsBust()
     {
         return GetHandValue() > 21;
     }
 
-    // هل بلاك جاك
     public bool HasBlackjack()
     {
         return cards.Count == 2 && GetHandValue() == 21;
     }
 
-    // جلب CardView المرتبط بالـ CardData
     public CardView GetCardView(CardData data)
     {
         foreach (CardView card in cardViews)
@@ -71,7 +64,6 @@ public class PlayerBase : MonoBehaviour
         return null;
     }
 
-    // إضافة كرت
     public void AddCard(CardData data, CardView view)
     {
         if (data == null || view == null) return;
@@ -80,7 +72,6 @@ public class PlayerBase : MonoBehaviour
         cardViews.Add(view);
     }
 
-    // إزالة كرت
     public void RemoveCard(CardData data)
     {
         cards.Remove(data);
@@ -92,7 +83,6 @@ public class PlayerBase : MonoBehaviour
         }
     }
 
-    // تصفير اليد لجولة جديدة
     public void ClearHand()
     {
         cards.Clear();

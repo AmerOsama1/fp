@@ -6,13 +6,11 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
     public GameObject resultPopup;
     public TextMeshProUGUI resultText;
-
     SoundManager _SoundManager;
-
     bool gameEnded = false;
+
 
     void Awake()
     {
@@ -46,8 +44,8 @@ public class GameManager : MonoBehaviour
         gameEnded = true;
 
         if      (dealerValue > 21)             PlayerWin();
-        else if (playerValue > dealerValue)    PlayerWin();
-        else if (playerValue < dealerValue)    PlayerLose();
+        else if (playerValue > dealerValue && playerValue<=21)    PlayerWin();
+        else if (playerValue < dealerValue && dealerValue<=21)    PlayerLose();
         else                                   Draw();
     }
 
@@ -92,39 +90,30 @@ public class GameManager : MonoBehaviour
     }
 
     // ─── Surrender ───────────────────────────────────────────
-    /// <summary>
-    /// يتفعّل لما اللاعب يعمل Surrender.
-    /// نص الرهان اترجع بالفعل في TurnManager.
-    /// </summary>
     public void PlayerSurrender()
     {
         if (!gameEnded) gameEnded = true;
 
-        int lost = MoneyManager.Instance.currentBet / 2;
+        ShowResult("SURRENDER ");
         MoneyManager.Instance.currentBet = 0;
 
-        ShowResult("SURRENDER -$" + lost);
+       
         Vibrate();
         StartCoroutine(RestartAfterDelay());
     }
 
     // ─── Split Result ────────────────────────────────────────
-    /// <summary>
-    /// يحسم نتيجة كل يد في السبليت بشكل منفصل.
-    /// </summary>
     public void ResolveSplitResult(bool h1Win, bool h1Push, bool h2Win, bool h2Push)
     {
         if (!gameEnded) gameEnded = true;
 
-        int bet = MoneyManager.Instance.currentBet; // نفس الرهان لكل يد
+        int bet = MoneyManager.Instance.currentBet; 
 
         int totalReturn = 0;
 
-        // اليد الأولى
         if (h1Win)        totalReturn += bet * 2;
         else if (h1Push)  totalReturn += bet;
 
-        // اليد الثانية
         if (h2Win)        totalReturn += bet * 2;
         else if (h2Push)  totalReturn += bet;
 
@@ -133,7 +122,6 @@ public class GameManager : MonoBehaviour
         MoneyManager.Instance.SaveMoneyPublic();
         MoneyManager.Instance.UpdateUIPublic();
 
-        // نص النتيجة
         string h1Text = h1Win ? "H1: Win" : h1Push ? "H1: Push" : "H1: Lose";
         string h2Text = h2Win ? "H2: Win" : h2Push ? "H2: Push" : "H2: Lose";
         ShowResult(h1Text + "\n" + h2Text);

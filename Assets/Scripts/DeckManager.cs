@@ -20,7 +20,6 @@ public class DeckManager : MonoBehaviour
 
     void Awake()
     {
-        // حماية Singleton
         if (instance == null)
             instance = this;
         else
@@ -34,19 +33,15 @@ public class DeckManager : MonoBehaviour
     {
         _SoundManager = SoundManager.Instance;
         Sc = GetComponent<AudioSource>();
-
         GenerateDeck();
         Shuffle();
-
-        Debug.Log("Deck Count: " + deck.Count);
+       // Debug.Log("Deck Count: " + deck.Count);
     }
 
     void GenerateDeck()
     {
         deck.Clear();
-
         CardData[] cards = Resources.LoadAll<CardData>("Cards");
-
         foreach (CardData card in cards)
         {
             if (card != null)
@@ -70,7 +65,7 @@ public class DeckManager : MonoBehaviour
     {
         if (deck.Count == 0)
         {
-            Debug.LogWarning("Deck Empty");
+            //Debug.LogWarning("Deck Empty");
             return null;
         }
 
@@ -82,7 +77,6 @@ public class DeckManager : MonoBehaviour
 
     public void StartRound()
     {
-        // تنظيف أيدي اللاعبين
         foreach (PlayerBase p in players)
         {
             if (p != null)
@@ -128,10 +122,8 @@ public class DeckManager : MonoBehaviour
             _SoundManager.PlaySoundclipOneShot(_SoundManager.CardClip, Sc);
 
         CardView view = cardObj.GetComponent<CardView>();
-
         bool faceUp = true;
 
-        // لو ديلر والكرت الثاني نخليه مخفي
         if (player.isBot && cardIndex == 1)
             faceUp = false;
 
@@ -163,7 +155,6 @@ public class DeckManager : MonoBehaviour
             card.transform.SetParent(hand, false);
     }
 
-    // زر Hit
     public void PlayerHit()
     {
         if (players.Count == 0) return;

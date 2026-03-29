@@ -5,10 +5,9 @@ public class CardView : MonoBehaviour
 {
     public Image cardImage;
     public Sprite cardBack;
-
     public CardData cardData;
-
     public bool isFaceUp = false;
+
 
     public void Setup(CardData card, bool faceUp)
     {
@@ -17,7 +16,6 @@ public class CardView : MonoBehaviour
             Debug.LogError("Card Image Missing");
             return;
         }
-
         cardData = card;
         isFaceUp = faceUp;
 
@@ -30,7 +28,6 @@ public class CardView : MonoBehaviour
             cardImage.sprite = cardBack;
     }
 
-    // قلب الكرت
     public void FlipCard()
     {
         if (cardData == null || cardImage == null)
@@ -40,7 +37,6 @@ public class CardView : MonoBehaviour
         cardImage.sprite = cardData.cardSprite;
     }
 
-    // إخفاء الكرت
     public void HideCard()
     {
         if (cardImage == null)

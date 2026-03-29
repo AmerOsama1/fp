@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
         musicToggle.isOn = PlayerPrefs.GetInt("Music", 1) == 1;
     }
 
+
   public void ToggleSound(bool value)
 {
     PlayerPrefs.SetInt("Sound", value ? 1 : 0);
@@ -39,7 +40,6 @@ public void ToggleMusic(bool value)
     }
 
  
-
     public void Play(string name)
     {
         SceneManager.LoadScene(name);

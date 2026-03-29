@@ -6,10 +6,6 @@ namespace CartoonUI
 {
     public class Close : MonoBehaviour
     {
-        public GameObject gameObject;
-        public void close()
-        {
-            gameObject.SetActive(false);
-        }
+       
     }
 }

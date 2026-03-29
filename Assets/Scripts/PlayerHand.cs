@@ -4,20 +4,18 @@ using UnityEngine;
 public class PlayerHand : MonoBehaviour
 {
     public List<CardData> hand = new List<CardData>();
-
     public GameObject cardPrefab;
     public RectTransform handArea;
+
 
     public void AddCard(CardData card)
     {
         hand.Add(card);
-
         GameObject cardObj = Instantiate(cardPrefab, handArea);
         CardView view = cardObj.GetComponent<CardView>();
         view.Setup(card, true);
     }
 
-    // حساب مجموع الكروت
     public int GetHandValue()
     {
         int total = 0;
@@ -31,7 +29,6 @@ public class PlayerHand : MonoBehaviour
                 aceCount++;
         }
 
-        // تحويل Ace من 11 إلى 1 لو عدى 21
         while (total > 21 && aceCount > 0)
         {
             total -= 10;
@@ -41,13 +38,11 @@ public class PlayerHand : MonoBehaviour
         return total;
     }
 
-    // هل اللاعب خسر
     public bool IsBust()
     {
         return GetHandValue() > 21;
     }
 
-    // بلاك جاك
     public bool HasBlackjack()
     {
         return hand.Count == 2 && GetHandValue() == 21;

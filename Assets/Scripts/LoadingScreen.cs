@@ -10,7 +10,6 @@ public class LoadingScreen : MonoBehaviour
     {
         StartCoroutine(LoadingRoutine());
     }
-
     IEnumerator LoadingRoutine()
     {
         float timer = 0f;
@@ -20,8 +19,6 @@ public class LoadingScreen : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
-
-
          SceneManager.LoadScene("game");
     }
 }

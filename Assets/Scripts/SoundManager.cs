@@ -6,6 +6,8 @@ public class SoundManager : MonoBehaviour
     public AudioClip CardClip;
     public AudioClip LoseClip;
     public AudioClip WinClip;
+    public AudioClip NoMoney;
+
 
     [Header("Audio Sources")]
     public AudioSource musicSource;
@@ -28,7 +30,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    // تشغيل صوت عادي
     public void PlaySoundclip(AudioClip clip, bool play, AudioSource source)
     {
         if (clip == null || source == null)
@@ -42,7 +43,6 @@ public class SoundManager : MonoBehaviour
             source.Stop();
     }
 
-    // تشغيل صوت OneShot
     public void PlaySoundclipOneShot(AudioClip clip, AudioSource source)
     {
         if (clip == null || source == null)
@@ -51,7 +51,6 @@ public class SoundManager : MonoBehaviour
         source.PlayOneShot(clip);
     }
 
-    // تشغيل صوت في مكان معين
     public void PlaySoundclipOnPlace(AudioClip clip)
     {
         if (clip == null)
@@ -60,7 +59,6 @@ public class SoundManager : MonoBehaviour
         AudioSource.PlayClipAtPoint(clip, transform.position);
     }
 
-    // تحديث إعدادات الصوت
     public void UpdateAudioSettings()
     {
         bool soundOn = PlayerPrefs.GetInt("Sound", 1) == 1;
